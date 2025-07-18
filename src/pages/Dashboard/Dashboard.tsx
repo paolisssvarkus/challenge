@@ -8,6 +8,7 @@ import SearchBar from '../../components/SearchBar/SearchBar';
 import type { Character } from '../../types/Character';
 import { Modal } from 'antd';
 import type { AppState } from '../../store/types';
+import { parseFilters } from '../../utils/filter';
 
 const Dashboard = () => {
   const dispatch = useDispatch();
@@ -42,6 +43,13 @@ const Dashboard = () => {
     dispatch(fetchCharacters(page)); 
   };
 
+  
+  const handleFetchSearch = async (searchTerm: string) => {
+      const filters = parseFilters(searchTerm);
+      dispatch(fetchCharacters(1, filters))
+  };
+
+
   return (
     <div className={styles.container}>
        <h1>Rick and Morty Characters</h1>
@@ -51,6 +59,7 @@ const Dashboard = () => {
             selectedCount={selectedCharacters.length}
             onToggleFavorite={handleToggleFavoriteOfSelected}
             onShowDetails={handleShowDetailsOfSelected}
+            onSearch={handleFetchSearch}
           />
           <CustomTable 
             data={characters}
