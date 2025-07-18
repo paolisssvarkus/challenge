@@ -16,11 +16,15 @@ export interface Character {
     name: string;
     url: string;
   };
+  location: {
+    name: string;
+    url: string;
+  };
   image: string;
-  episode: string[];
-  url: string;
-  isFavorite: boolean;
+  episode: string[]; 
+  isFavorite?: boolean;
 }
+
 
 export interface AppState {
   characters: Character[];
