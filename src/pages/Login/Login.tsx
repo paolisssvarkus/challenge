@@ -3,10 +3,12 @@ import { Form, Input, Button, message } from 'antd';
 import styles from './Login.module.scss';
 import users from '../../utils/users.json';
 import type { User } from '../../types/User';
+import { useNavigate } from 'react-router-dom';
 
 const Login: React.FC = () => {
   const [form] = Form.useForm();
   const [isFormValid, setIsFormValid] = useState(false);
+  const navigate = useNavigate();
 
   const handleFinish = (values: User): void => {
     const found = users.find(
@@ -15,6 +17,7 @@ const Login: React.FC = () => {
 
     if (found) {
       message.success('Login successful!');
+      navigate('/dashboard');
     } else {
       message.error('Invalid email or password');
     }
