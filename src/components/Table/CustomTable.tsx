@@ -7,9 +7,10 @@ import type { ColumnsType } from 'antd/es/table';
 interface Props {
   data: Character[];
   onToggleFavorite: (id: number) => void;
+  onSelectRows?: (selected: Character[]) => void;
 }
 
-const CustomTable: React.FC<Props> = ({ data, onToggleFavorite }) => {
+const CustomTable: React.FC<Props> = ({ data, onToggleFavorite, onSelectRows }) => {
   const [contextMenuVisible, setContextMenuVisible] = useState(false);
   const [contextTarget, setContextTarget] = useState<Character | null>(null);
 
@@ -91,6 +92,11 @@ const CustomTable: React.FC<Props> = ({ data, onToggleFavorite }) => {
         onRow={(record) => ({
           onContextMenu: (event) => handleRowRightClick(record, event),
         })}
+        rowSelection={{
+          onChange: (_, selectedRows) => {
+            onSelectRows?.(selectedRows);
+          },
+        }}
       />
 
       {contextMenuVisible && contextTarget && (
