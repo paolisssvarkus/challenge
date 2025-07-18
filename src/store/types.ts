@@ -31,6 +31,8 @@ export interface AppState {
   info: ApiInfo | null;
   loading: boolean;
   currentPage: number;
+  pageSize: number; 
+  totalItems: number; 
 }
 
 export const ActionTypes = {
@@ -39,6 +41,8 @@ export const ActionTypes = {
   SET_LOADING: 'SET_LOADING',
   SET_INFO: 'SET_INFO',
   SET_CURRENT_PAGE: 'SET_CURRENT_PAGE',
+  SET_PAGE_SIZE: 'SET_PAGE_SIZE',
+  SET_TOTAL_ITEMS: 'SET_TOTAL_ITEMS',
 } as const;
 
 export type ActionType = typeof ActionTypes[keyof typeof ActionTypes];
@@ -68,9 +72,21 @@ interface SetCurrentPageAction {
   payload: number;
 }
 
+interface SetPageSizeAction {
+  type: typeof ActionTypes.SET_PAGE_SIZE;
+  payload: number;
+}
+
+interface SetTotalItemsAction {
+  type: typeof ActionTypes.SET_TOTAL_ITEMS;
+  payload: number;
+}
+
 export type AppAction =
   | SetCharactersAction
   | ToggleFavoriteAction
   | SetLoadingAction
   | SetInfoAction
-  | SetCurrentPageAction;
+  | SetCurrentPageAction
+  | SetPageSizeAction
+  | SetTotalItemsAction;

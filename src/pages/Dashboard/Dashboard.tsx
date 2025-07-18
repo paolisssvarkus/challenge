@@ -3,17 +3,18 @@ import styles from './Dashboard.module.scss';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchCharacters, toggleFavorite } from '../../store/actions';
-import type { RootState } from '../../store';
 import FavoriteCounter from '../../components/FavoriteCounter/FavoriteCounter';
 import SearchBar from '../../components/SearchBar/SearchBar';
 import type { Character } from '../../types/Character';
 import { Modal } from 'antd';
+import type { AppState } from '../../store/types';
 
 const Dashboard = () => {
   const dispatch = useDispatch();
-  const characters = useSelector((state: RootState) => state.characters);
-  const loading = useSelector((state: RootState) => state.loading);
-
+  const characters = useSelector((state: AppState) => state.characters);
+  const loading = useSelector((state: AppState) => state.loading);
+  const currentPage = useSelector((state: AppState) => state.currentPage);
+  const info = useSelector((state: AppState) => state.info);
   const [selectedCharacters, setSelectedCharacters] = useState<Character[]>([]);
   const [modalCharacter, setModalCharacter] = useState<Character | null>(null);
 
@@ -36,7 +37,11 @@ const Dashboard = () => {
       setModalCharacter(selectedCharacters[0]);
     }
   };
-  
+
+  const handlePageChange = (page: number) => {
+    dispatch(fetchCharacters(page)); 
+  };
+
   return (
     <div className={styles.container}>
        <h1>Rick and Morty Characters</h1>
@@ -51,6 +56,10 @@ const Dashboard = () => {
             data={characters}
             onToggleFavorite={handleToggleFavorite} 
             onSelectRows={setSelectedCharacters}
+            currentPage={currentPage}
+            totalItems={info?.count || 0}
+            onPageChange={(page) => handlePageChange(page)}
+            loading={loading}
           />
           <FavoriteCounter />
 

@@ -8,9 +8,13 @@ interface Props {
   data: Character[];
   onToggleFavorite: (id: number) => void;
   onSelectRows?: (selected: Character[]) => void;
+  currentPage: number;
+  totalItems: number;
+  onPageChange: (page: number) => void;
+  loading: boolean;
 }
 
-const CustomTable: React.FC<Props> = ({ data, onToggleFavorite, onSelectRows }) => {
+const CustomTable: React.FC<Props> = ({ data, onToggleFavorite, onSelectRows, currentPage, totalItems, onPageChange, loading}) => {
   const [contextMenuVisible, setContextMenuVisible] = useState(false);
   const [contextTarget, setContextTarget] = useState<Character | null>(null);
 
@@ -88,7 +92,14 @@ const CustomTable: React.FC<Props> = ({ data, onToggleFavorite, onSelectRows }) 
         rowKey="id"
         dataSource={data}
         columns={columns}
-        pagination={false}
+        loading={loading}
+        pagination={{
+          current: currentPage,
+          pageSize: 20, 
+          total: totalItems,
+          showSizeChanger: false,
+          onChange: onPageChange, 
+        }}
         onRow={(record) => ({
           onContextMenu: (event) => handleRowRightClick(record, event),
         })}

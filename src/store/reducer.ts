@@ -9,6 +9,8 @@ const initialState: AppState = {
   info: null,
   loading: false,
   currentPage: 1,
+  pageSize: 20, 
+  totalItems: 0
 };
 
 export const reducer = (
@@ -33,6 +35,16 @@ export const reducer = (
       return { ...state, info: action.payload };
     case ActionTypes.SET_CURRENT_PAGE:
       return { ...state, currentPage: action.payload };
+    case ActionTypes.SET_PAGE_SIZE:
+      return { ...state, pageSize: action.payload };
+    case ActionTypes.SET_TOTAL_ITEMS:
+      return { ...state, totalItems: action.payload };
+    case ActionTypes.SET_INFO:
+      return {
+        ...state,
+        info: action.payload,
+        totalItems: action.payload.count, 
+      };
     default:
       return state;
   }
