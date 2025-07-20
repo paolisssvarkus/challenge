@@ -9,6 +9,8 @@ import type { Character } from '../../types/Character';
 import { Modal } from 'antd';
 import type { AppState } from '../../store/types';
 import { parseFilters } from '../../utils/filter';
+import loadingGif from '../../assets/images/loading.gif';
+import logo from '../../assets/images/rickandmorty.png';
 
 const Dashboard = () => {
   const dispatch = useDispatch();
@@ -52,8 +54,15 @@ const Dashboard = () => {
 
   return (
     <div className={styles.container}>
-       <h1>Rick and Morty Characters</h1>
-      {loading ? <p>Loading...</p> : (
+      <div className={styles.titleContainer}>
+        <img src={logo} className={styles.imgLogo} />
+        <h1 className={styles.title}>Rick and Morty Characters</h1>
+      </div>
+      {loading ?
+      <>
+        <p className={styles.text}>Loading...</p>
+        <img src={loadingGif} className={styles.image} />
+      </>  : (
         <>
           <SearchBar
             selectedCount={selectedCharacters.length}
@@ -83,7 +92,7 @@ const Dashboard = () => {
                 <img
                   src={modalCharacter.image}
                   alt={modalCharacter.name}
-                  style={{ width: '100%', borderRadius: 8, marginBottom: 16 }}
+                  className={styles.imageCharacter}
                 />
                 <p><strong>Full Name:</strong> {modalCharacter.name}</p>
                 <p><strong>Origin:</strong> {modalCharacter.origin?.name}</p>

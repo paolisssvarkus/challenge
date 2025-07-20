@@ -16,6 +16,9 @@ const Login: React.FC = () => {
     );
 
     if (found) {
+      const expiresAt = Date.now() + 5 * 60 * 1000; 
+      localStorage.setItem('token', 'logged-in');
+      localStorage.setItem('expiresAt', expiresAt.toString());
       message.success('Login successful!');
       navigate('/dashboard');
     } else {
@@ -51,6 +54,7 @@ const Login: React.FC = () => {
             ]}
           >
             <Input 
+              className={styles.input}
               placeholder="Enter your email"
               autoComplete="email"
             />
@@ -64,6 +68,7 @@ const Login: React.FC = () => {
             ]}
           >
             <Input.Password 
+              className={styles.input}
               placeholder="Enter your password"
               autoComplete="current-password"
             />

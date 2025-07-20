@@ -14,13 +14,17 @@ interface Props {
   loading: boolean;
 }
 
+interface MousePosition {
+  x: number;
+  y: number;
+}
+
 const CustomTable: React.FC<Props> = ({ data, onToggleFavorite, onSelectRows, currentPage, totalItems, onPageChange, loading}) => {
   const [contextMenuVisible, setContextMenuVisible] = useState(false);
   const [contextTarget, setContextTarget] = useState<Character | null>(null);
-
+  const [mousePosition, setMousePosition] = useState<MousePosition>({ x: 0, y: 0 });
   const [modalCharacter, setModalCharacter] = useState<Character | null>(null);
   const [loadingModal, setLoadingModal] = useState(false);
-
   const contextRef = useRef<HTMLDivElement>(null);
 
   const columns: ColumnsType<Character> = [
@@ -33,7 +37,7 @@ const CustomTable: React.FC<Props> = ({ data, onToggleFavorite, onSelectRows, cu
     {
       title: 'Image',
       dataIndex: 'image',
-      render: (url) => <img src={url} alt="Character" width={50} />,
+      render: (url) => <img src={url} alt="Character" className={styles.imageCharacterIcon} />,
     },
     {
       title: 'Favorite',
@@ -48,6 +52,10 @@ const CustomTable: React.FC<Props> = ({ data, onToggleFavorite, onSelectRows, cu
 
   const handleRowRightClick = (record: Character, e: React.MouseEvent) => {
     e.preventDefault();
+    setMousePosition({
+      x: e.clientX,
+      y: e.clientY
+    });
     setContextTarget(record);
     setContextMenuVisible(true);
   };
@@ -61,6 +69,38 @@ const CustomTable: React.FC<Props> = ({ data, onToggleFavorite, onSelectRows, cu
     window.addEventListener('click', handleClickOutside);
     return () => window.removeEventListener('click', handleClickOutside);
   }, []);
+
+  useEffect(() => {
+    if (contextRef.current && contextMenuVisible) {
+      const position = getMenuPosition();
+      contextRef.current.style.setProperty('--menu-top', `${position.top}px`);
+      contextRef.current.style.setProperty('--menu-left', `${position.left}px`);
+    }
+  }, [contextMenuVisible, mousePosition]);
+
+  const getMenuPosition = () => {
+    if (!contextRef.current) return { top: mousePosition.y, left: mousePosition.x };
+
+    const menuRect = contextRef.current.getBoundingClientRect();
+    const windowWidth = window.innerWidth;
+    const windowHeight = window.innerHeight;
+
+    let x = mousePosition.x;
+    let y = mousePosition.y;
+
+    if (x + menuRect.width > windowWidth) {
+      x = windowWidth - menuRect.width - 10;
+    }
+
+    if (y + menuRect.height > windowHeight) {
+      y = windowHeight - menuRect.height - 10;
+    }
+
+    x = Math.max(10, x);
+    y = Math.max(10, y);
+
+    return { top: y, left: x };
+  };
 
   const handleToggleFavorite = () => {
     if (contextTarget) {
@@ -87,8 +127,9 @@ const CustomTable: React.FC<Props> = ({ data, onToggleFavorite, onSelectRows, cu
   };
 
   return (
-    <div className={styles.tableWrapper} style={{ position: 'relative' }}>
+    <div className={styles.tableWrapper} >
       <Table
+        className={styles.customTable}
         rowKey="id"
         dataSource={data}
         columns={columns}
@@ -114,28 +155,16 @@ const CustomTable: React.FC<Props> = ({ data, onToggleFavorite, onSelectRows, cu
         <div
           ref={contextRef}
           className={styles.contextMenu}
-          style={{
-            position: 'absolute',
-            top: '20px',
-            left: '40px',
-            backgroundColor: '#fff',
-            border: '1px solid #ccc',
-            boxShadow: '0px 4px 8px rgba(0,0,0,0.15)',
-            borderRadius: 4,
-            zIndex: 1000,
-          }}
         >
           <div
             className={styles.contextMenuItem}
             onClick={handleToggleFavorite}
-            style={{ padding: '8px 12px', cursor: 'pointer' }}
           >
             {contextTarget.isFavorite ? 'Remove fav' : 'Make fav'}
           </div>
           <div
             className={styles.contextMenuItem}
             onClick={handleShowDetails}
-            style={{ padding: '8px 12px', cursor: 'pointer' }}
           >
             View Details
           </div>
@@ -155,7 +184,7 @@ const CustomTable: React.FC<Props> = ({ data, onToggleFavorite, onSelectRows, cu
             <img
               src={modalCharacter.image}
               alt={modalCharacter.name}
-              style={{ width: '100%', borderRadius: 8, marginBottom: 16 }}
+              className={styles.image}
             />
             <p><strong>Full Name:</strong> {modalCharacter.name}</p>
             <p><strong>Origin:</strong> {modalCharacter.origin?.name}</p>
