@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Dropdown, Button, Menu, Input } from 'antd';
 import { DownOutlined } from '@ant-design/icons';
+import styles from './SearchBar.module.scss';
 
 interface Props {
   selectedCount: number;
@@ -17,11 +18,13 @@ const SearchBar: React.FC<Props> = ({ selectedCount, onToggleFavorite, onShowDet
   }
 
   const menu = (
-    <Menu>
-      <Menu.Item key="favorite" onClick={onToggleFavorite}>
+    <Menu className={styles.menuCustom}>
+      <Menu.Item key="favorite" onClick={onToggleFavorite}
+        className={styles.menuItemCustom}>
         Toggle Favorite ({selectedCount} selected)
       </Menu.Item>
       <Menu.Item
+        className={styles.menuItemCustom}
         key="details"
         onClick={onShowDetails}
         disabled={selectedCount !== 1}
@@ -32,7 +35,7 @@ const SearchBar: React.FC<Props> = ({ selectedCount, onToggleFavorite, onShowDet
   );
 
   return (
-    <div>
+    <div className={styles.searchContainer}>
       <Input
         placeholder='Search by name, status or gender (e.g. "rick alive male")'
         value={searchTerm}
