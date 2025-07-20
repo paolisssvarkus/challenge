@@ -23,6 +23,7 @@ const SearchBar: React.FC<Props> = ({ selectedCount, onToggleFavorite, onShowDet
         className={styles.menuItemCustom}>
         Toggle Favorite ({selectedCount} selected)
       </Menu.Item>
+      {selectedCount==1 &&
       <Menu.Item
         className={styles.menuItemCustom}
         key="details"
@@ -31,6 +32,8 @@ const SearchBar: React.FC<Props> = ({ selectedCount, onToggleFavorite, onShowDet
       >
         View Details
       </Menu.Item>
+      }
+      
     </Menu>
   );
 

@@ -2,6 +2,12 @@
 Check out the deployed project here:
  https://687c680575721d8395893c00--fanciful-biscochitos-c723f4.netlify.app/
 
+ Credentials:
+ ```bash
+ email: admin@example.com
+  password: 123456
+  ```
+
 ## Installation
 
 Clone the repository and navigate into the project directory:
