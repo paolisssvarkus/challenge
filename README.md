@@ -1,6 +1,6 @@
 #### Live Demo
 Check out the deployed project here:
- https://687c680575721d8395893c00--fanciful-biscochitos-c723f4.netlify.app/
+https://fanciful-biscochitos-c723f4.netlify.app/
 
  Credentials:
  ```bash
