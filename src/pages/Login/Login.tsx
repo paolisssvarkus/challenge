@@ -1,7 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { Form, Input, Button, message } from 'antd';
 import styles from './Login.module.scss';
-import users from '../../utils/users.json';
 import type { User } from '../../types/User';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -13,12 +12,13 @@ const Login: React.FC = () => {
 
   const handleFinish = async (values: User): Promise<void> => {
     try {
+      const apiUrl = import.meta.env.VITE_REACT_APP_API_URL || '';
       const response = await axios.post(
-        'https://localhost:7114/LogIn',
+        `${apiUrl}/LogIn`,
         values
       );
-      if (response.data?.token) {
-        sessionStorage.setItem('token', response.data.token);
+      if (response.data) {
+        sessionStorage.setItem('token', response.data);
         sessionStorage.setItem('email', values.email); 
         message.success('Login successful!');
         navigate('/dashboard');

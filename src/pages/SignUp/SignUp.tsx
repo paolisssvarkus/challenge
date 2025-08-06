@@ -13,8 +13,9 @@ const SignUp: React.FC = () => {
 
    const handleFinish = async (values: User): Promise<void> => {
     try {
+    const apiUrl = import.meta.env.VITE_REACT_APP_API_URL || '';
       const response = await axios.post(
-        'https://localhost:7114/SignUp',
+        `${apiUrl}/SignUp`,
         values
       );
       if (response.data?.token) {

@@ -33,6 +33,8 @@ interface Filters {
   gender?: string;
 }
 
+const apiUrl = import.meta.env.VITE_REACT_APP_API_URL || '';
+
 export const setCharacters = (characters: Character[]): AppAction => ({
   type: ActionTypes.SET_CHARACTERS,
   payload: characters,
@@ -50,20 +52,17 @@ export const toggleFavorite = (id: number): any => {
       console.error('No token or email found in sessionStorage');
       return;
     }
-
     try {
       if (isCurrentlyFavorite) {
-        // Si ya es favorito, lo quitamos
-        await axios.delete(`https://localhost:7114/api/Favorites/${id}`, {
+        await axios.delete(`${apiUrl}/api/Favorites/${id}`, {
           headers: {
             Authorization: `Bearer ${token}`,
             'Content-Type': 'application/json',
           },
         });
       } else {
-        // Si no es favorito, lo agregamos
         await axios.post(
-          'https://localhost:7114/api/Favorites',
+          `${apiUrl}/api/Favorites`,
           { id, email },
           {
             headers: {
@@ -142,7 +141,7 @@ export const fetchFavorites = async (): Promise<any[] | null> => {
       console.error('No token found in sessionStorage');
       return [];
     }
-    const response = await axios.get('https://localhost:7114/api/Favorites', {
+    const response = await axios.get(`${apiUrl}/api/Favorites`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },

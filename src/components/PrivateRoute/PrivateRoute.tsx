@@ -4,13 +4,13 @@ import { message } from 'antd';
 
 const PrivateRoute: React.FC = () => {
   const navigate = useNavigate();
-  const token = localStorage.getItem('token');
-  const expiresAt = localStorage.getItem('expiresAt');
+  const token = sessionStorage.getItem('token');
+  const expiresAt = sessionStorage.getItem('expiresAt');
 
   useEffect(() => {
     if (expiresAt && Date.now() > parseInt(expiresAt)) {
-      localStorage.removeItem('token');
-      localStorage.removeItem('expiresAt');
+      sessionStorage.removeItem('token');
+      sessionStorage.removeItem('expiresAt');
       message.warning('Sesión expirada. Inicia sesión nuevamente.');
       navigate('/');
     }
