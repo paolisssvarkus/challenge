@@ -1,35 +1,32 @@
 import React, { useState, useCallback } from 'react';
 import { Form, Input, Button, message } from 'antd';
-import styles from './Login.module.scss';
+import styles from './SignUp.module.scss';
 import users from '../../utils/users.json';
 import type { User } from '../../types/User';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
-const Login: React.FC = () => {
+const SignUp: React.FC = () => {
   const [form] = Form.useForm();
   const [isFormValid, setIsFormValid] = useState(false);
   const navigate = useNavigate();
 
-  const handleFinish = async (values: User): Promise<void> => {
+   const handleFinish = async (values: User): Promise<void> => {
     try {
       const response = await axios.post(
-        'https://localhost:7114/LogIn',
+        'https://localhost:7114/SignUp',
         values
       );
       if (response.data?.token) {
-        sessionStorage.setItem('token', response.data.token);
-        sessionStorage.setItem('email', values.email); 
-        message.success('Login successful!');
-        navigate('/dashboard');
-      } else {
-        message.error('No token received');
+        localStorage.setItem('token', response.data.token);
       }
+      message.success('Account created successfully!');
+      navigate('/');
     } catch (error: any) {
       if (error.response && error.response.data && error.response.data.message) {
         message.error(error.response.data.message);
       } else {
-        message.error('Invalid email or password');
+        message.error('Error creating account');
       }
     }
   };
@@ -46,6 +43,7 @@ const Login: React.FC = () => {
   return (
     <div className={styles.loginContainer}>
       <div className={styles.loginForm}>
+         <h1 className={styles.title}>Sign Up</h1>
         <Form
           form={form}
           layout="vertical"
@@ -89,14 +87,15 @@ const Login: React.FC = () => {
               disabled={!isFormValid} 
               block
             >
-              Login
+              Sign Up
             </Button>
           </Form.Item>
         </Form>
-        <a href='/sign-up' className={styles.text}>Create account</a>
+
+        <a href='/' className={styles.text}>Already have an account? Login</a>
       </div>
     </div>
   );
 };
 
-export default Login;
+export default SignUp;

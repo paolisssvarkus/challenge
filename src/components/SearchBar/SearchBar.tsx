@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Dropdown, Button, Menu, Input } from 'antd';
 import { DownOutlined } from '@ant-design/icons';
 import styles from './SearchBar.module.scss';
+import { fetchCharacters } from '../../store/actions';
+import { useDispatch } from 'react-redux';
 
 interface Props {
   selectedCount: number;
@@ -12,9 +14,14 @@ interface Props {
 
 const SearchBar: React.FC<Props> = ({ selectedCount, onToggleFavorite, onShowDetails, onSearch }) => {
   const [searchTerm, setSearchTerm] = useState('');
+    const dispatch = useDispatch();
 
    const handleSearch = () => {
     onSearch(searchTerm.trim());
+  }
+  
+  const handleClear = () => {
+    dispatch(fetchCharacters(1))
   }
 
   const menu = (
@@ -48,6 +55,9 @@ const SearchBar: React.FC<Props> = ({ selectedCount, onToggleFavorite, onShowDet
       />
       <Button type="primary" onClick={handleSearch}>
         Search
+      </Button>
+      <Button type="primary" onClick={handleClear}>
+        Clear
       </Button>
       <Dropdown overlay={menu} disabled={selectedCount === 0}>
         <Button>

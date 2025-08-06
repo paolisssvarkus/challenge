@@ -5,6 +5,7 @@ import Dashboard from './pages/Dashboard/Dashboard';
 import { Provider } from 'react-redux';
 import { store } from './store';
 import PrivateRoute from './components/PrivateRoute/PrivateRoute';
+import SignUp from './pages/SignUp/SignUp';
 
 function App() {
 
@@ -13,9 +14,8 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Login />} />
-          <Route element={<PrivateRoute />}>
-            <Route path="/dashboard" element={<Dashboard />} />
-          </Route>
+          <Route path="/sign-up" element={<SignUp />} />
+          <Route path="/dashboard" element={<Dashboard />} />
         </Routes>
       </BrowserRouter>
     </Provider>

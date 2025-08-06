@@ -4,7 +4,10 @@ import {ActionTypes} from './types';
 import type {
   Character,
   ApiInfo,
-  AppAction, } from './types';
+  AppAction,
+  AppState
+
+} from './types';
 
 interface ApiCharacter {
   id: number;
@@ -35,10 +38,50 @@ export const setCharacters = (characters: Character[]): AppAction => ({
   payload: characters,
 });
 
-export const toggleFavorite = (id: number): AppAction => ({
-  type: ActionTypes.TOGGLE_FAVORITE,
-  payload: id,
-});
+export const toggleFavorite = (id: number): any => {
+  return async (dispatch: Dispatch<AppAction>, getState: () => AppState) => {
+    const state = getState();
+    const char = state.characters.find(c => c.id === id);
+    const isCurrentlyFavorite = char?.isFavorite;
+
+    const token = sessionStorage.getItem('token');
+    const email = sessionStorage.getItem('email');
+    if (!token || !email) {
+      console.error('No token or email found in sessionStorage');
+      return;
+    }
+
+    try {
+      if (isCurrentlyFavorite) {
+        // Si ya es favorito, lo quitamos
+        await axios.delete(`https://localhost:7114/api/Favorites/${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+      } else {
+        // Si no es favorito, lo agregamos
+        await axios.post(
+          'https://localhost:7114/api/Favorites',
+          { id, email },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              'Content-Type': 'application/json',
+            },
+          }
+        );
+      }
+      dispatch({
+        type: ActionTypes.TOGGLE_FAVORITE,
+        payload: id,
+      });
+    } catch (error) {
+      console.error('Error toggling favorite:', error);
+    }
+  };
+};
 
 export const setLoading = (loading: boolean): AppAction => ({
   type: ActionTypes.SET_LOADING,
@@ -63,22 +106,21 @@ export const fetchCharacters = (
     dispatch(setLoading(true));
     try {
       const params = new URLSearchParams({ page: String(page) });
-
       Object.entries(filters).forEach(([key, value]) => {
         if (value) params.append(key, value);
       });
-
       const response = await axios.get(
         `https://rickandmortyapi.com/api/character/?${params.toString()}`
       );
-
+      const favorites = await fetchFavorites();
+      const favoriteIds = Array.isArray(favorites)
+        ? favorites.map((fav: any) => fav.id)
+        : [];
       const { results, info } = response.data;
-
       const characters: Character[] = results.map((char: ApiCharacter) => ({
         ...char,
-        isFavorite: false,
+        isFavorite: favoriteIds.includes(char.id),
       }));
-
       dispatch(setCharacters(characters));
       dispatch(setInfo(info));
       dispatch(setCurrentPage(page));
@@ -91,3 +133,23 @@ export const fetchCharacters = (
     }
   };
 };
+
+export const fetchFavorites = async (): Promise<any[] | null> => {
+  try {
+    const token = sessionStorage.getItem('token');
+    console.log('Token:', token);
+    if (!token) {
+      console.error('No token found in sessionStorage');
+      return [];
+    }
+    const response = await axios.get('https://localhost:7114/api/Favorites', {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data; 
+  } catch (error) {
+    console.error('Error fetching favorites:', error);
+    return [];
+  }
+}

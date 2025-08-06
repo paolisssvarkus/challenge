@@ -6,7 +6,7 @@ import { fetchCharacters, toggleFavorite } from '../../store/actions';
 import FavoriteCounter from '../../components/FavoriteCounter/FavoriteCounter';
 import SearchBar from '../../components/SearchBar/SearchBar';
 import type { Character } from '../../types/Character';
-import { Modal } from 'antd';
+import { Button, Modal } from 'antd';
 import type { AppState } from '../../store/types';
 import { parseFilters } from '../../utils/filter';
 import loadingGif from '../../assets/images/loading.gif';
@@ -23,7 +23,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     dispatch(fetchCharacters(1));
-  }, [dispatch]);
+  }, []);
 
   const handleToggleFavorite = (id: number) => {
     dispatch(toggleFavorite(id));
@@ -51,9 +51,22 @@ const Dashboard = () => {
       dispatch(fetchCharacters(1, filters))
   };
 
+  const handleLogOut = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('expiresAt');
+    sessionStorage.removeItem('token');
+    sessionStorage.removeItem('email'); 
+    window.location.href = '/';
+  };
+
 
   return (
     <div className={styles.container}>
+      <div className={styles.logOutContainer}>
+        <Button type="primary" onClick={handleLogOut}>
+          Log out
+        </Button>
+      </div>
       <div className={styles.titleContainer}>
         <img src={logo} className={styles.imgLogo} />
         <h1 className={styles.title}>Rick and Morty Characters</h1>
