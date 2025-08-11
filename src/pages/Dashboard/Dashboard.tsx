@@ -39,16 +39,6 @@ const Dashboard = () => {
     ws.onmessage = (event) => {
       console.log("Mensaje recibido:");
       console.log("Mensaje recibido:", event.data);
-      // const [action, idStr, email] = event.data.split(":");
-      // const id = parseInt(idStr, 10);
-      // console.log(`Received message: ${event.data}`);
-      // console.log(event.data.split(':'))
-
-      // if (action === "added") {
-      //   console.log(`Favorite added: ${id} for ${email}`);
-      // } else if (action === "deleted") {
-      //   console.log(`Favorite deleted: ${id} for ${email}`);
-      // }
     };
 
     ws.onclose = () => {
