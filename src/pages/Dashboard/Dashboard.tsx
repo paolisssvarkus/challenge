@@ -1,6 +1,6 @@
 import CustomTable from '../../components/Table/CustomTable';
 import styles from './Dashboard.module.scss';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchCharacters, toggleFavorite } from '../../store/actions';
 import FavoriteCounter from '../../components/FavoriteCounter/FavoriteCounter';
@@ -20,10 +20,56 @@ const Dashboard = () => {
   const info = useSelector((state: AppState) => state.info);
   const [selectedCharacters, setSelectedCharacters] = useState<Character[]>([]);
   const [modalCharacter, setModalCharacter] = useState<Character | null>(null);
+  const webSocket = useRef<WebSocket | null>(null);
+
+  const closeWebSocket = () => {
+    webSocket.current?.close();
+    webSocket.current = null;
+  };
+  
+  useEffect(() => {
+    const wsUrl = `wss://localhost:7114/ws/favorites?email=${sessionStorage.getItem('email')}`; 
+
+    const ws = new WebSocket(wsUrl);
+
+    ws.onopen = () => {
+      console.log("WebSocket conectado");
+    };
+
+    ws.onmessage = (event) => {
+      console.log("Mensaje recibido:");
+      console.log("Mensaje recibido:", event.data);
+      // const [action, idStr, email] = event.data.split(":");
+      // const id = parseInt(idStr, 10);
+      // console.log(`Received message: ${event.data}`);
+      // console.log(event.data.split(':'))
+
+      // if (action === "added") {
+      //   console.log(`Favorite added: ${id} for ${email}`);
+      // } else if (action === "deleted") {
+      //   console.log(`Favorite deleted: ${id} for ${email}`);
+      // }
+    };
+
+    ws.onclose = () => {
+      console.log("WebSocket desconectado");
+    };
+
+    webSocket.current = ws;
+
+    window.addEventListener('beforeunload', closeWebSocket);
+ 
+    return () => {
+      closeWebSocket();
+      window.removeEventListener('beforeunload', closeWebSocket);
+    };
+  }, []);
 
   useEffect(() => {
     dispatch(fetchCharacters(1));
-  }, []);
+   
+  
+  }, [dispatch]);
 
   const handleToggleFavorite = (id: number) => {
     dispatch(toggleFavorite(id));

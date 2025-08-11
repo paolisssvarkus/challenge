@@ -6,17 +6,21 @@ import { Provider } from 'react-redux';
 import { store } from './store';
 import PrivateRoute from './components/PrivateRoute/PrivateRoute';
 import SignUp from './pages/SignUp/SignUp';
+import FavoritesWebSocketListener from './websocket/socket';
 
 function App() {
 
   return (
     <Provider store={store}>
       <BrowserRouter>
+        {/* <FavoritesWebSocketListener /> */}
         <Routes>
           <Route path="/" element={<Login />} />
           <Route path="/sign-up" element={<SignUp />} />
           <Route path="/dashboard" element={<PrivateRoute />}>
-            <Route index element={<Dashboard />} />
+            <>
+              <Route index element={<Dashboard />} />
+            </>
           </Route>
         </Routes>
       </BrowserRouter>
